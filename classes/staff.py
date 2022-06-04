@@ -1,22 +1,33 @@
+#staff.py
+import os
 import csv
-import os.path
+
 from classes.person import Person
 
-class Staff(Person):
+the_path = os.path.abspath(os.path.dirname(__file__))
+path = os.path.join(the_path, '../data/staff.csv')
 
-    def __init__(self, name, age, password, role, employee_id):
-        super().__init__(name, age, password, role)
+class Staff(Person):
+    def __init__(self, name, age, employee_id, password, role = 'Staff'):
+        super().__init__(name,age,password)
+        self.role = role
         self.employee_id = employee_id
 
+    def get_school_id(self):
+        return self.employee_id
+
+    # def __repr__(self):
+    #     return f'{self.name} is a {self.age} years old student who holds the {self.role} position. The student\'s id is {self.employee_id}'
+
     @classmethod
-    def objects(cls):
-        staff = []
-        my_path = os.path.abspath(os.path.dirname(__file__))
-        path = os.path.join(my_path, "../data/staff.csv")
+    def all_staff(cls):
+        with open(path) as staff_files:
+            staff_reader = csv.DictReader(staff_files)
+            staff_arr = []
+            for staff in staff_reader:
+                staff_arr.append(Staff(staff['name'], staff['age'], staff['employee_id'], staff['password'], staff['role']))
+            return staff_arr
 
-        with open(path) as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                staff.append(Staff(**dict(row)))
-
-        return staff
+# print(Staff.all_staff())
+# linda = Staff('Linda', 24, 'Librarian', 'xx' , 28990778)
+# print(linda)
